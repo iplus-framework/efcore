@@ -1007,4 +1007,29 @@ public static class CosmosEntityTypeBuilderExtensions
             ? existingThroughput?.Throughput == throughput
             : existingThroughput?.AutoscaleMaxThroughput == throughput;
     }
+
+    /// <summary>
+    ///     Configures a database trigger on the entity.
+    /// </summary>
+    /// <param name="entityTypeBuilder">The builder for the entity type being configured.</param>
+    /// <param name="modelName">The name of the trigger.</param>
+    /// <returns>A builder that can be used to configure the database trigger.</returns>
+    /// <remarks>
+    ///     See <see href="https://aka.ms/efcore-docs-triggers">Database triggers</see> for more information and examples.
+    /// </remarks>
+    public static TriggerBuilder HasTrigger(this EntityTypeBuilder entityTypeBuilder, string modelName)
+        => EntityTypeBuilder.HasTrigger(entityTypeBuilder.Metadata, modelName);
+
+    /// <summary>
+    ///     Configures a database trigger on the entity.
+    /// </summary>
+    /// <param name="entityTypeBuilder">The builder for the entity type being configured.</param>
+    /// <param name="modelName">The name of the trigger.</param>
+    /// <returns>A builder that can be used to configure the database trigger.</returns>
+    /// <remarks>
+    ///     See <see href="https://aka.ms/efcore-docs-triggers">Database triggers</see> for more information and examples.
+    /// </remarks>
+    public static TriggerBuilder HasTrigger<TEntity>(this EntityTypeBuilder<TEntity> entityTypeBuilder, string modelName)
+        where TEntity : class
+        => EntityTypeBuilder.HasTrigger(entityTypeBuilder.Metadata, modelName);
 }

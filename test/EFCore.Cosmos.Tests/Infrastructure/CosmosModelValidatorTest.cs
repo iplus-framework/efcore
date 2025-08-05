@@ -2,6 +2,7 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 
 using Microsoft.Azure.Cosmos;
+using Microsoft.Azure.Cosmos.Scripts;
 using Microsoft.EntityFrameworkCore.Cosmos.Internal;
 using Newtonsoft.Json.Linq;
 
@@ -579,6 +580,62 @@ public class CosmosModelValidatorTest : ModelValidatorTestBase
     private class ComplexTypeInCollection
     {
         public string Value { get; set; }
+    }
+
+    [ConditionalFact]
+    public virtual void Detects_trigger_on_derived_type()
+    {
+        var modelBuilder = CreateConventionModelBuilder();
+        modelBuilder.Entity<Customer>();
+        modelBuilder.Entity<SpecialCustomer>().HasTrigger("TestTrigger");
+
+        VerifyError(
+            CosmosStrings.TriggerOnDerivedType("TestTrigger", nameof(SpecialCustomer), nameof(Customer)),
+            modelBuilder);
+    }
+
+    [ConditionalFact]
+    public virtual void Detects_trigger_without_type()
+    {
+        var modelBuilder = CreateConventionModelBuilder();
+        var entityType = modelBuilder.Entity<Customer>().Metadata;
+
+        entityType.AddTrigger("TestTrigger");
+
+        VerifyError(
+            CosmosStrings.TriggerMissingType("TestTrigger", nameof(Customer)),
+            modelBuilder);
+    }
+
+    [ConditionalFact]
+    public virtual void Passes_with_valid_triggers()
+    {
+        var modelBuilder = CreateConventionModelBuilder();
+        modelBuilder.Entity<Customer>()
+            .HasTrigger("PreTrigger").HasTriggerType(TriggerType.Pre).HasTriggerOperation(TriggerOperation.Create);
+        modelBuilder.Entity<Customer>()
+            .HasTrigger("PostTrigger").HasTriggerType(TriggerType.Post).HasTriggerOperation(TriggerOperation.Replace);
+
+        Validate(modelBuilder);
+    }
+
+    [ConditionalFact]
+    public virtual void Detects_trigger_missing_operation()
+    {
+        var modelBuilder = CreateConventionModelBuilder();
+        var entityType = modelBuilder.Entity<Customer>().Metadata;
+
+        var trigger = entityType.AddTrigger("TestTrigger");
+        trigger.SetTriggerType(TriggerType.Pre);
+
+        VerifyError(
+            CosmosStrings.TriggerMissingOperation("TestTrigger", nameof(Customer)),
+            modelBuilder);
+    }
+
+    protected class SpecialCustomer : Customer
+    {
+        public string SpecialProperty { get; set; }
     }
 
     private class RememberMyName<T>
