@@ -60,5 +60,7 @@
     <PackageVersion Include="Microsoft.Build.Framework" Version="$(MicrosoftBuildFrameworkVersion)" />
     <!--Workaround for Microsoft.Data.SqlClient v5.1.6 and Microsoft.CodeAnalysis.Analyzer.Testing v1.1.2-->
     <PackageVersion Include="System.Formats.Asn1" Version="$(SystemFormatsAsn1Version)" />
+
+    <PackageVersion Include="Microsoft.Extensions.Hosting" Version="9.0.5" />
   </ItemGroup>
 </Project>
