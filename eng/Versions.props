@@ -17,24 +17,24 @@
     <UsingToolXliff>False</UsingToolXliff>
   </PropertyGroup>
   <PropertyGroup Label="Dependencies from dotnet/runtime">
-    <MicrosoftExtensionsCachingMemoryVersion>9.0.5</MicrosoftExtensionsCachingMemoryVersion>
-    <MicrosoftExtensionsConfigurationVersion>9.0.5</MicrosoftExtensionsConfigurationVersion>
-    <MicrosoftExtensionsConfigurationAbstractionsVersion>9.0.5</MicrosoftExtensionsConfigurationAbstractionsVersion>
-    <MicrosoftExtensionsConfigurationEnvironmentVariablesVersion>9.0.5</MicrosoftExtensionsConfigurationEnvironmentVariablesVersion>
-    <MicrosoftExtensionsConfigurationJsonVersion>9.0.5</MicrosoftExtensionsConfigurationJsonVersion>
-    <MicrosoftExtensionsDependencyInjectionVersion>9.0.5</MicrosoftExtensionsDependencyInjectionVersion>
-    <MicrosoftExtensionsDependencyModelVersion>9.0.5</MicrosoftExtensionsDependencyModelVersion>
-    <MicrosoftExtensionsHostFactoryResolverSourcesVersion>9.0.5-servicing.25215.9</MicrosoftExtensionsHostFactoryResolverSourcesVersion>
-    <MicrosoftExtensionsLoggingVersion>9.0.5</MicrosoftExtensionsLoggingVersion>
-    <MicrosoftNETCoreAppRefVersion>9.0.5</MicrosoftNETCoreAppRefVersion>
-    <MicrosoftNETCoreAppRuntimewinx64Version>9.0.5</MicrosoftNETCoreAppRuntimewinx64Version>
-    <MicrosoftNETCoreBrowserDebugHostTransportVersion>9.0.5-servicing.25215.9</MicrosoftNETCoreBrowserDebugHostTransportVersion>
-    <SystemTextEncodingsWebVersion>9.0.5</SystemTextEncodingsWebVersion>
-    <SystemTextJsonVersion>9.0.5</SystemTextJsonVersion>
-    <SystemFormatsAsn1Version>9.0.5</SystemFormatsAsn1Version>
+    <MicrosoftExtensionsCachingMemoryVersion>9.0.7</MicrosoftExtensionsCachingMemoryVersion>
+    <MicrosoftExtensionsConfigurationVersion>9.0.7</MicrosoftExtensionsConfigurationVersion>
+    <MicrosoftExtensionsConfigurationAbstractionsVersion>9.0.7</MicrosoftExtensionsConfigurationAbstractionsVersion>
+    <MicrosoftExtensionsConfigurationEnvironmentVariablesVersion>9.0.7</MicrosoftExtensionsConfigurationEnvironmentVariablesVersion>
+    <MicrosoftExtensionsConfigurationJsonVersion>9.0.7</MicrosoftExtensionsConfigurationJsonVersion>
+    <MicrosoftExtensionsDependencyInjectionVersion>9.0.7</MicrosoftExtensionsDependencyInjectionVersion>
+    <MicrosoftExtensionsDependencyModelVersion>9.0.7</MicrosoftExtensionsDependencyModelVersion>
+    <MicrosoftExtensionsHostFactoryResolverSourcesVersion>9.0.7-servicing.25316.16</MicrosoftExtensionsHostFactoryResolverSourcesVersion>
+    <MicrosoftExtensionsLoggingVersion>9.0.7</MicrosoftExtensionsLoggingVersion>
+    <MicrosoftNETCoreAppRefVersion>9.0.7</MicrosoftNETCoreAppRefVersion>
+    <MicrosoftNETCoreAppRuntimewinx64Version>9.0.7</MicrosoftNETCoreAppRuntimewinx64Version>
+    <MicrosoftNETCoreBrowserDebugHostTransportVersion>9.0.7-servicing.25316.16</MicrosoftNETCoreBrowserDebugHostTransportVersion>
+    <SystemTextEncodingsWebVersion>9.0.7</SystemTextEncodingsWebVersion>
+    <SystemTextJsonVersion>9.0.7</SystemTextJsonVersion>
+    <SystemFormatsAsn1Version>9.0.7</SystemFormatsAsn1Version>
   </PropertyGroup>
   <PropertyGroup Label="Dependencies from dotnet/arcade">
-    <MicrosoftDotNetBuildTasksTemplatingVersion>9.0.0-beta.25271.1</MicrosoftDotNetBuildTasksTemplatingVersion>
+    <MicrosoftDotNetBuildTasksTemplatingVersion>9.0.0-beta.25302.2</MicrosoftDotNetBuildTasksTemplatingVersion>
   </PropertyGroup>
   <PropertyGroup Label="Other dependencies">
     <MicrosoftBuildFrameworkVersion>17.8.3</MicrosoftBuildFrameworkVersion>
