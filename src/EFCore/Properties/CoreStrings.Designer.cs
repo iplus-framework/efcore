@@ -1317,7 +1317,7 @@ namespace Microsoft.EntityFrameworkCore.Diagnostics
                 entityType, property, expectedType, actualType);
 
         /// <summary>
-        ///     The methods '{methodName}' and '{asyncMethodName}' are not supported by the current database provider. Please contact the publisher of the database provider for more information.
+        ///     The methods '{methodName}' and '{asyncMethodName}' are not supported by the current database provider. Please contact the publisher of the database provider for more information. 
         /// </summary>
         public static string ExecuteQueriesNotSupported(object? methodName, object? asyncMethodName)
             => string.Format(
@@ -2908,6 +2908,18 @@ namespace Microsoft.EntityFrameworkCore.Diagnostics
             => string.Format(
                 GetString("ReferenceMustBeLoaded", "0_navigation", "1_entityType"),
                 navigation, entityType);
+
+        /// <summary>
+        ///     Unable to refresh query with multiple merge options!
+        /// </summary>
+        public static string RefreshMultipleMergeOptions
+            => GetString("RefreshMultipleMergeOptions");
+
+        /// <summary>
+        ///     Unable to refresh non-tracking query!
+        /// </summary>
+        public static string RefreshNonTrackingQuery
+            => GetString("RefreshNonTrackingQuery");
 
         /// <summary>
         ///     The principal and dependent ends of the relationship cannot be changed once foreign key or principal key properties have been specified. Remove the conflicting configuration.
