@@ -1003,7 +1003,7 @@ namespace Microsoft.EntityFrameworkCore.Diagnostics
             => GetString("EFConstantInvoked");
 
         /// <summary>
-        ///     'EF.Constant()' isn't supported your by provider.
+        ///     'EF.Constant()' isn't supported by your provider.
         /// </summary>
         public static string EFConstantNotSupported
             => GetString("EFConstantNotSupported");
@@ -2702,6 +2702,18 @@ namespace Microsoft.EntityFrameworkCore.Diagnostics
             => string.Format(
                 GetString("ReferenceMustBeLoaded", "0_navigation", "1_entityType"),
                 navigation, entityType);
+
+        /// <summary>
+        ///     Unable to refresh query with multiple merge options!
+        /// </summary>
+        public static string RefreshMultipleMergeOptions
+            => GetString("RefreshMultipleMergeOptions");
+
+        /// <summary>
+        ///     Unable to refresh non-tracking query!
+        /// </summary>
+        public static string RefreshNonTrackingQuery
+            => GetString("RefreshNonTrackingQuery");
 
         /// <summary>
         ///     The principal and dependent ends of the relationship cannot be changed once foreign key or principal key properties have been specified. Remove the conflicting configuration.
