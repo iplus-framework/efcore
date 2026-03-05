@@ -27,9 +27,7 @@
 
   <Import Project="Sdk.props" Sdk="Microsoft.DotNet.Arcade.Sdk" />
 
-  <Import
-    Project="$([MSBuild]::GetDirectoryNameOfFileAbove($(MSBuildThisFileDirectory), AspNetCoreSettings.props))\AspNetCoreSettings.props"
-    Condition="'$([MSBuild]::GetDirectoryNameOfFileAbove($(MSBuildThisFileDirectory), AspNetCoreSettings.props))' != '' " />
+  <Import Project="$([MSBuild]::GetDirectoryNameOfFileAbove($(MSBuildThisFileDirectory), AspNetCoreSettings.props))\AspNetCoreSettings.props" Condition="'$([MSBuild]::GetDirectoryNameOfFileAbove($(MSBuildThisFileDirectory), AspNetCoreSettings.props))' != '' " />
 
   <PropertyGroup Condition="'$(CopyrightMicrosoft)' != ''">
     <Copyright>$(CopyrightMicrosoft)</Copyright>
@@ -48,6 +46,16 @@
     <PackageProjectUrl>https://docs.microsoft.com/ef/core/</PackageProjectUrl>
     <PackageIconFullPath>$(MSBuildThisFileDirectory)logo\ef-logo.png</PackageIconFullPath>
     <PublishWindowsPdb>false</PublishWindowsPdb>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(UseIPlusPackages)' == 'true'">
+    <Authors>gipSoft d.o.o.</Authors>
+    <Company>gipSoft d.o.o.</Company>
+    <Copyright>© Microsoft Corporation. All rights reserved. © gipSoft d.o.o. All rights reserved.</Copyright>
+    <Product>iPlus Entity Framework Core</Product>
+    <PackageProjectUrl>https://github.com/iplus-framework/efcore/tree/ef_main_iPlus</PackageProjectUrl>
+    <PackageDescription>iPlus Fork of ef core main repository</PackageDescription>
+    <PackageTags>iPlus;iPlusMES;custom fork;Entity Framework Core;entity-framework-core;EF;Data;O/RM;EntityFramework;EntityFrameworkCore;EFCore</PackageTags>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(DeveloperBuild)' == 'true'">
