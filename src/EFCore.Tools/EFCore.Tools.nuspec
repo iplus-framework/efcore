@@ -5,7 +5,7 @@
     $CommonMetadataElements$
     <dependencies>
       <group targetFramework=".NET8.0">
-        <dependency id="Microsoft.EntityFrameworkCore.Design" version="$Version$" />
+        <dependency id="$DesignPackageId$" version="$Version$" />
       </group>
     </dependencies>
     <readme>docs\PACKAGE.md</readme>

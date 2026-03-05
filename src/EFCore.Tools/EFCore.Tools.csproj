@@ -46,9 +46,14 @@ Update-Database
     Workaround for insufficient support for tools packages by NuGet Pack: https://github.com/NuGet/Home/issues/6321.
   -->
   <Target Name="SetPackageProperties" BeforeTargets="InitializeStandardNuspecProperties" DependsOnTargets="Build">
+    <PropertyGroup>
+      <DesignPackageId Condition="'$(UseIPlusPackages)' == 'true'">$(PackageIdPrefix).EntityFrameworkCore.Design</DesignPackageId>
+      <DesignPackageId Condition="'$(UseIPlusPackages)' != 'true'">Microsoft.EntityFrameworkCore.Design</DesignPackageId>
+    </PropertyGroup>
     <ItemGroup>
       <NuspecProperty Include="configuration=$(Configuration)" />
       <NuspecProperty Include="intermediateOutputPath=$(IntermediateOutputPath)" />
+      <NuspecProperty Include="DesignPackageId=$(DesignPackageId)" />
     </ItemGroup>
   </Target>
 
