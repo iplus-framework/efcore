@@ -1,4 +1,25 @@
 <Project>
+  <PropertyGroup Condition="'$(UseIPlusPackages)' == 'true'">
+    <PackageId Condition="$(MSBuildProjectName.StartsWith('Microsoft.'))">$(MSBuildProjectName.Replace('Microsoft.', '$(PackageIdPrefix).'))</PackageId>
+    <PackageId Condition="'$(MSBuildProjectName)' == 'EFCore'">$(PackageIdPrefix).EntityFrameworkCore</PackageId>
+    <PackageId Condition="$(MSBuildProjectName.StartsWith('EFCore.'))">$(MSBuildProjectName.Replace('EFCore.', '$(PackageIdPrefix).EntityFrameworkCore.'))</PackageId>
+  </PropertyGroup>
+
+  <ItemGroup Condition="'$(UseIPlusPackages)' == 'true'">
+    <None Update="buildTransitive\**\$(AssemblyName).props">
+      <PackagePath>buildTransitive\%(RecursiveDir)$(PackageId).props</PackagePath>
+    </None>
+    <None Update="buildTransitive\**\$(AssemblyName).targets">
+      <PackagePath>buildTransitive\%(RecursiveDir)$(PackageId).targets</PackagePath>
+    </None>
+    <None Update="build\**\$(AssemblyName).props">
+      <PackagePath>build\%(RecursiveDir)$(PackageId).props</PackagePath>
+    </None>
+    <None Update="build\**\$(AssemblyName).targets">
+      <PackagePath>build\%(RecursiveDir)$(PackageId).targets</PackagePath>
+    </None>
+  </ItemGroup>
+
   <PropertyGroup>
     <!-- Disable IsAotCompatible on non-DefaultNetCoreTargetFrameworks even if explicitly enabled or else we'll get NETSDK1210 errors -->
     <IsAotCompatible Condition="'$(TargetFramework)' != '$(DefaultNetCoreTargetFramework)'"></IsAotCompatible>
