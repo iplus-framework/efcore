@@ -1,38 +1,45 @@
 # Generating Custom NuGet Packages (iPlus)
 
-This document describes the implementation of generating NuGet packages with the `iPlus` prefix instead of `Microsoft`, with minimal changes to the source code.
+This document explains how to generate NuGet packages with the `iPlus` prefix instead of `Microsoft`, using build properties and without editing individual `.csproj` files.
 
 ## Goal
-Enable the creation of packages like `iPlus.EntityFrameworkCore.SqlServer` from the same source code that generates `Microsoft.EntityFrameworkCore.SqlServer`, using a switch during the build. This is separate from the standard build process so as not to disrupt dependencies in tests.
 
-## Implementation
+Generate packages such as `iPlus.EntityFrameworkCore.SqlServer` from the same source code that normally produces `Microsoft.EntityFrameworkCore.SqlServer`.
 
-Changes are made exclusively in the `Directory.Build.props` and `Directory.Build.targets` files in the root of the repository, allowing for global application without changing hundreds of `.csproj` files.
+The mechanism is opt-in and controlled through `UseIPlusPackages=true`, so the default development/test workflow remains unchanged.
 
-### 1. Directory.Build.props
-Variables have been added to control the process:
-- `UseIPlusPackages`: Switch that activates renaming (Default: `false` so as not to interfere with standard build and tests).
-- `PackageIdPrefix`: Defines the new prefix (Set to: `iPlus`).
+## Implementation Summary
+
+The implementation is centralized in the repository root files:
+
+- `Directory.Build.props`
+- `Directory.Build.targets`
+
+### 1. `Directory.Build.props`
+
+Adds properties to control package renaming:
+
+- `UseIPlusPackages`: Enables iPlus package behavior (default: `false`)
+- `PackageIdPrefix`: Prefix used for package names (`iPlus`)
+
+When `UseIPlusPackages=true`, package metadata is also overridden (for example, `Authors`, `Company`, `Product`, `PackageProjectUrl`, and `PackageTags`).
 
 ```xml
 <PropertyGroup>
-  ...
-  <UseIPlusPackages Condition="'$(UseIPlusPackages)' == ''">false</UseIPlusPackages>
-  <PackageIdPrefix>iPlus</PackageIdPrefix>
+    <UseIPlusPackages Condition="'$(UseIPlusPackages)' == ''">false</UseIPlusPackages>
+    <PackageIdPrefix>iPlus</PackageIdPrefix>
 </PropertyGroup>
 ```
 
-### 2. Directory.Build.targets
-Logic has been added that executes at the end of project loading:
+### 2. `Directory.Build.targets`
 
-1.  **Renaming PackageId**:
-    - Changes `Microsoft.*` to `iPlus.*`.
-    - Changes `EFCore` to `iPlus.EntityFrameworkCore`.
-    - Changes `EFCore.*` to `iPlus.EntityFrameworkCore.*`.
+When `UseIPlusPackages=true`, package IDs are rewritten as follows:
 
-2.  **Fixing Internal Package Structure (Build Transitive)**:
-    - Some packages (e.g. `EFCore`, `EFCore.Design`) contain `.props` and `.targets` files in `build` folders that must have the same name as the package.
-    - Logic automatically renames these files during packaging (e.g. `Microsoft.EntityFrameworkCore.props` becomes `iPlus.EntityFrameworkCore.props` inside the package). This resolves the `NU5129` error.
+- `Microsoft.*` -> `iPlus.*`
+- `EFCore` -> `iPlus.EntityFrameworkCore`
+- `EFCore.*` -> `iPlus.EntityFrameworkCore.*`
+
+It also updates packed `.props` and `.targets` file names in `build` and `buildTransitive` folders to match the rewritten `PackageId`. This avoids packaging inconsistencies such as `NU5129`.
 
 ```xml
 <PropertyGroup Condition="'$(UseIPlusPackages)' == 'true'">
@@ -43,74 +50,103 @@ Logic has been added that executes at the end of project loading:
 
 <ItemGroup Condition="'$(UseIPlusPackages)' == 'true'">
     <None Update="buildTransitive\**\$(AssemblyName).props">
-      <PackagePath>buildTransitive\%(RecursiveDir)$(PackageId).props</PackagePath>
+        <PackagePath>buildTransitive\%(RecursiveDir)$(PackageId).props</PackagePath>
     </None>
-    <!-- ... similarly for other .targets and build/ folder ... -->
+    <None Update="buildTransitive\**\$(AssemblyName).targets">
+        <PackagePath>buildTransitive\%(RecursiveDir)$(PackageId).targets</PackagePath>
+    </None>
+    <None Update="build\**\$(AssemblyName).props">
+        <PackagePath>build\%(RecursiveDir)$(PackageId).props</PackagePath>
+    </None>
+    <None Update="build\**\$(AssemblyName).targets">
+        <PackagePath>build\%(RecursiveDir)$(PackageId).targets</PackagePath>
+    </None>
 </ItemGroup>
 ```
 
-## Usage Instructions
+## Usage
 
-### Standard Build (Microsoft Packages)
-This is the default mode. Used for development, testing, and CI that expects standard names.
+### Prerequisites
+
+Before building/packing in this repository:
+
+```powershell
+.\restore.cmd
+. .\activate.ps1
+```
+
+### Standard build (Microsoft packages)
+
+Default mode used for regular development and CI:
 
 ```cmd
 build.cmd
-# or
-dotnet build
 ```
 
-### Generating iPlus Packages
-To create packages with the `iPlus` prefix, you need to set `UseIPlusPackages=true`.
+### Generate iPlus packages
 
-**For all packages:**
-You can run pack at the solution or root folder level (note: this may take a while and build tests if not specified otherwise).
+Enable iPlus naming by setting `UseIPlusPackages=true`.
+
+For the full solution:
 
 ```cmd
-dotnet pack -c Release -p:UseIPlusPackages=true
+dotnet pack EFCore.sln -c Release -p:UseIPlusPackages=true
 ```
 
-**For a specific project:**
+For a specific project:
+
 ```cmd
 dotnet pack src\Microsoft.Data.Sqlite\Microsoft.Data.Sqlite.csproj -c Release -p:UseIPlusPackages=true
 ```
 
-Packages will be generated in the folder: `artifacts\packages\Release\Shipping\`
+Packages are generated under:
 
-**Examples of generated packages:**
+`artifacts\packages\Release\Shipping\`
+
+Examples:
+
 - `iPlus.EntityFrameworkCore.10.0.0-dev.nupkg`
 - `iPlus.EntityFrameworkCore.SqlServer.10.0.0-dev.nupkg`
 - `iPlus.Data.Sqlite.10.0.0-dev.nupkg`
 
-## Issues and Solutions
+## Known Issue: Test-project build conflicts during full-solution pack
 
-### Error in Test Projects (EFCore.AspNet.Specification.Tests)
+When packing `EFCore.sln`, some test projects may fail with type-conflict errors (for example `CS0433` for `DbContextOptions`) because they can end up seeing both local and external EF Core assemblies with different versions.
 
-When running `dotnet pack` on the entire solution (`EFCore.sln`), an error may occur when building test projects such as `EFCore.AspNet.Specification.Tests`.
+If your goal is only to produce runtime iPlus packages, this failure can happen after many target packages are already produced. Verify output in:
 
-**Error:**
-`error CS0433: The type 'DbContextOptions' exists in both 'Microsoft.EntityFrameworkCore, Version=42.42.42.42...' and 'Microsoft.EntityFrameworkCore, Version=9.0.5.0...'`
+`artifacts\packages\Release\Shipping\`
 
-**Cause:**
-This test project references the local project `EFCore` (which for tests is still the "Microsoft.EntityFrameworkCore" assembly, but a different version) and simultaneously depends on a NuGet package (e.g. `Microsoft.AspNetCore.Identity.EntityFrameworkCore`) that pulls in a published version of EF Core. Due to the version difference, a type conflict occurs.
+## Generating Microsoft and iPlus packages
 
-**Solution:**
-You can **ignore** this error if you only need the main runtime packages (`iPlus.EntityFrameworkCore`, `iPlus.EntityFrameworkCore.SqlServer`, etc.). These packages are successfully generated *before* the build process reaches the test projects and crashes. Check the `artifacts\packages\Release\Shipping\` folder - the packages are there.
+Both package sets cannot be produced in one MSBuild evaluation because `UseIPlusPackages` changes `PackageId` during evaluation.
 
-### Generating Original (Microsoft) and iPlus Packages Simultaneously
+Run two separate pack commands:
 
-Since the generation logic relies on the `UseIPlusPackages` property which changes the `PackageId` at evaluation time, it is not possible to generate both sets of packages in a single MSBuild pass.
+1. Generate Microsoft packages:
 
-To generate both, run the pack command twice sequentially:
+     ```cmd
+     dotnet pack -c Release
+     ```
 
-1.  **Generate Standard Packages:**
-    ```cmd
-    dotnet pack -c Release
-    ```
+2. Generate iPlus packages:
 
-2.  **Generate iPlus Packages:**
-    ```cmd
-    dotnet pack -c Release -p:UseIPlusPackages=true
-    ```
+     ```cmd
+     dotnet pack -c Release -p:UseIPlusPackages=true
+     ```
 
-The packages will coexist in the output directory because they have different filenames (e.g., `Microsoft.EntityFrameworkCore...nupkg` and `iPlus.EntityFrameworkCore...nupkg`).
+The outputs can coexist in the same folder because filenames differ.
+
+## Generate iPlus packages without `-dev` suffix
+
+To produce release-style version suffix behavior, set `StabilizePackageVersion=true`.
+
+```cmd
+dotnet pack -c Release -p:UseIPlusPackages=true -p:StabilizePackageVersion=true
+dotnet pack -c Release -p:UseIPlusPackages=true -p:StabilizePackageVersion=true
+```
+
+Property summary:
+
+- `UseIPlusPackages`: Rewrites package IDs to the `iPlus` prefix.
+- `StabilizePackageVersion`: Uses release-style package versioning (no `-dev` suffix for shipping package versions).
