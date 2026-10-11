@@ -42,7 +42,10 @@
     <PackageVersion Include="Microsoft.Azure.Cosmos" Version="3.51.0" />
 
     <!-- SQL Server dependencies -->
-    <PackageVersion Include="Microsoft.Data.SqlClient" Version="6.1.1" />
+    <!-- iplus fork of SqlClient (browser transport); id prefixed like the other iPlus packages.
+         Do NOT reference the official "Microsoft.Data.SqlClient" id here — the packed
+         iPlus.EntityFrameworkCore.* packages must depend on the fork package. -->
+    <PackageVersion Include="iPlus.Microsoft.Data.SqlClient" Version="7.1.1-iplus.1" />
     <PackageVersion Include="Microsoft.SqlServer.Types" Version="160.1000.6" />
 
     <!-- external dependencies -->

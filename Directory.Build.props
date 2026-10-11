@@ -27,6 +27,17 @@
 
   <Import Project="Sdk.props" Sdk="Microsoft.DotNet.Arcade.Sdk" />
 
+  <!--
+    NuGet audit suppressions (NU1902/NU1903 are errors via TreatWarningsAsErrors).
+    GHSA-2m69-gcr7-jv3q (CVE-2025-6965): SQLitePCLRaw.lib.e_sqlite3 <= 2.1.11 bundles
+    SQLite < 3.50.2. There is NO patched SQLitePCLRaw release yet (the advisory lists
+    "Patched versions: None"), so the only option is to suppress the audit entry until
+    ericsink/SQLitePCL.raw ships a bundle with e_sqlite3 >= 3.50.2. Re-evaluate on bump.
+  -->
+  <ItemGroup>
+    <NuGetAuditSuppress Include="https://github.com/advisories/GHSA-2m69-gcr7-jv3q" />
+  </ItemGroup>
+
   <Import Project="$([MSBuild]::GetDirectoryNameOfFileAbove($(MSBuildThisFileDirectory), AspNetCoreSettings.props))\AspNetCoreSettings.props" Condition="'$([MSBuild]::GetDirectoryNameOfFileAbove($(MSBuildThisFileDirectory), AspNetCoreSettings.props))' != '' " />
 
   <PropertyGroup Condition="'$(CopyrightMicrosoft)' != ''">
@@ -39,6 +50,10 @@
     <PackageTags>Entity Framework Core;entity-framework-core;EF;Data;O/RM;EntityFramework;EntityFrameworkCore;EFCore</PackageTags>
     <Product>Microsoft Entity Framework Core</Product>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <!-- NU5104: the iPlus.EntityFrameworkCore.* packages intentionally depend on the
+         prerelease fork package iPlus.Microsoft.Data.SqlClient (7.1.1-iplus.1) — same
+         suppression the Avalonia fork uses for its prerelease deps. -->
+    <NoWarn>$(NoWarn);NU5104</NoWarn>
     <LangVersion>preview</LangVersion>
     <Nullable>enable</Nullable>
     <Deterministic>true</Deterministic>

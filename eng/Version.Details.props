@@ -7,7 +7,7 @@ This file should be imported by eng/Versions.props
   <PropertyGroup>
     <!-- dotnet/dotnet dependencies -->
     <MicrosoftDotNetArcadeSdkPackageVersion>10.0.0-beta.26120.115</MicrosoftDotNetArcadeSdkPackageVersion>
-    <MicrosoftDotNetBuildTasksTemplatingPackageVersion>10.0.0-beta.26120.115</MicrosoftDotNetBuildTasksTemplatingPackageVersion>
+    <MicrosoftDotNetBuildTasksTemplatingPackageVersion>10.0.0-beta.26122.102</MicrosoftDotNetBuildTasksTemplatingPackageVersion>
     <MicrosoftDotNetHelixSdkPackageVersion>10.0.0-beta.26120.115</MicrosoftDotNetHelixSdkPackageVersion>
     <MicrosoftExtensionsCachingMemoryPackageVersion>10.0.5</MicrosoftExtensionsCachingMemoryPackageVersion>
     <MicrosoftExtensionsConfigurationPackageVersion>10.0.5</MicrosoftExtensionsConfigurationPackageVersion>
