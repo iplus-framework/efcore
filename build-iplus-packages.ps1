@@ -5,6 +5,7 @@
 #>
 
 $ErrorActionPreference = "Stop"
+$msbuildCompatArgs = @("-p:MicrosoftDotNetMacOsPkgVersion=10.0.0-beta.26122.102")
 
 # 1. Clean artifacts
 Write-Host "------------------------------------------------------------" -ForegroundColor Cyan
@@ -24,7 +25,7 @@ Write-Host "Step 2: Running standard build (build.cmd)..." -ForegroundColor Cyan
 Write-Host "------------------------------------------------------------" -ForegroundColor Cyan
 
 if (Test-Path "build.cmd") {
-    & .\build.cmd
+    & .\build.cmd @msbuildCompatArgs
     
     if ($LASTEXITCODE -ne 0) {
         Write-Error "Standard build failed with exit code $LASTEXITCODE."
@@ -49,7 +50,7 @@ Write-Host "Running dotnet pack on $solutionFile with UseIPlusPackages=true..."
 $origErrorAction = $ErrorActionPreference
 $ErrorActionPreference = "Continue"
 
-& dotnet pack $solutionFile -c Release -p:UseIPlusPackages=true
+& dotnet pack $solutionFile -c Release -p:UseIPlusPackages=true @msbuildCompatArgs
 
 $ErrorActionPreference = $origErrorAction
 

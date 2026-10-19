@@ -32,6 +32,9 @@ if [[ "$KEEP_DEV" == false ]]; then
     STABILIZE_ARGS=(-p:StabilizePackageVersion=true)
 fi
 
+# The Arcade SDK's default MacOsPkg version is missing from the configured feeds.
+MSBUILD_COMPAT_ARGS=(-p:MicrosoftDotNetMacOsPkgVersion=10.0.0-beta.26122.102)
+
 step() {
     echo
     echo "------------------------------------------------------------"
@@ -50,7 +53,7 @@ fi
 
 # 2. Run standard build (restore + build, sets up SDK via eng/common)
 step "Step 2: Running standard build (build.sh)..."
-./build.sh --build --restore "${EXTRA_ARGS[@]}"
+./build.sh --build --restore "${MSBUILD_COMPAT_ARGS[@]}" "${EXTRA_ARGS[@]}"
 rc=$?
 if [[ $rc -ne 0 ]]; then
     echo "ERROR: Standard build failed with exit code $rc." >&2
@@ -61,7 +64,7 @@ fi
 step "Step 3: Generating iPlus packages (dotnet pack EFCore.sln -p:UseIPlusPackages=true)..."
 # Note: packing the full solution may fail on some test projects (e.g. CS0433 type
 # conflicts) AFTER the shipping packages have been produced — hence no set -e here.
-dotnet pack EFCore.sln -c Release -p:UseIPlusPackages=true "${STABILIZE_ARGS[@]}" "${EXTRA_ARGS[@]}"
+dotnet pack EFCore.sln -c Release -p:UseIPlusPackages=true "${STABILIZE_ARGS[@]}" "${MSBUILD_COMPAT_ARGS[@]}" "${EXTRA_ARGS[@]}"
 pack_rc=$?
 
 # 4. Verify results
